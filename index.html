@@ -2060,7 +2060,7 @@ const sfx = (() => {
         startTypewriter() {
             twAudio.currentTime = 0;
             twAudio.volume = 0;
-            fadeIn(twAudio, 0.3, 200);
+            fadeIn(twAudio, 0.3 * volumeMultiplier, 200);
         },
         stopTypewriter() {
             fadeOut(twAudio, 400);
@@ -2069,25 +2069,25 @@ const sfx = (() => {
         playGrain() {
             grainAudio.currentTime = 0;
             grainAudio.volume = 0;
-            fadeIn(grainAudio, 0.12, 200);           // max 12% volume — subtle
+            fadeIn(grainAudio, 0.12 * volumeMultiplier, 200);           // max 12% volume — subtle
             setTimeout(() => fadeOut(grainAudio, 400), 620);
         },
         // Button click: subtle
         playClick() {
             clickAudio.currentTime = 0;
-            clickAudio.volume = 0.25;
+            clickAudio.volume = 0.25 * volumeMultiplier;
             clickAudio.play().catch(() => {});
         },
         // Hero play button: cinematic opening sound
         playOpen() {
             playOpenAudio.currentTime = 0;
-            playOpenAudio.volume = 0.65;
+            playOpenAudio.volume = 0.65 * volumeMultiplier;
             playOpenAudio.play().catch(() => {});
         },
         // Wheel spin: plays during carousel momentum
         playWheelSpin() {
             wheelSpinAudio.currentTime = 0;
-            wheelSpinAudio.volume = 0.55;
+            wheelSpinAudio.volume = 0.55 * volumeMultiplier;
             wheelSpinAudio.play().catch(() => {});
         },
         stopWheelSpin() {
@@ -2110,6 +2110,11 @@ const sfx = (() => {
             interactiveElements.forEach(el => {
                 el.addEventListener('click', (e) => {
                     sfx.playClick();
+                    const isMobile = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.matchMedia('(max-width: 768px) and (hover: none)').matches;
+                    const MOBILE = isMobile();
+    
+                    // Volume multiplier for mobile (reduce to 40% of desktop volume)
+                    const volumeMultiplier = MOBILE ? 0.4 : 1;
                 });
             });
 
