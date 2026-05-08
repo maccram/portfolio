@@ -369,112 +369,20 @@
         }
 
         /* ─── PRELOADER ───────────────────────────────────────────── */
-        #stage {
+        #preloader-frame {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            border: none;
             width: 100%;
             height: 100%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            pointer-events: all;
+            transition: opacity 0.75s cubic-bezier(0.77, 0, 0.18, 1);
         }
 
-        /* ── Phase 1: WebP image ── */
-        #phase-webp {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            transition: opacity 0.55s ease;
-        }
-
-        #phase-webp.out {
+        #preloader-frame.exit {
             opacity: 0;
             pointer-events: none;
-        }
-
-        #anim-img {
-            display: block;
-            width: auto;
-            height: auto;
-            max-width: min(280px, 60vw);
-            max-height: 50vh;
-            object-fit: contain;
-        }
-
-        /* ── Phase 2: Typewriter ── */
-        #phase-type {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0 8vw;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.55s ease;
-        }
-
-        #phase-type.in {
-            opacity: 1;
-        }
-
-        .pre-rule {
-            width: 32px;
-            height: 1px;
-            background: var(--accent);
-            margin: 0 auto 36px;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.5s cubic-bezier(0.77, 0, 0.18, 1) 0.2s;
-        }
-
-        #phase-type.in .pre-rule {
-            transform: scaleX(1);
-        }
-
-        .pre-text {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: clamp(0.78rem, 1.1vw, 0.95rem);
-            font-weight: 400;
-            letter-spacing: 0.08em;
-            line-height: 1.7;
-            color: var(--dim);
-            max-width: 620px;
-        }
-
-        .pre-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1em;
-            background: var(--accent);
-            margin-left: 4px;
-            vertical-align: text-bottom;
-            animation: blink 0.85s step-end infinite;
-        }
-
-        .pre-cursor.done {
-            animation: none;
-            opacity: 0;
-            transition: opacity 0.4s 0.5s;
-        }
-
-        @keyframes blink {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
-            }
-        }
-
-        /* ── Whole page fade-out at the very end ── */
-        body.exit {
-            opacity: 0;
-            transition: opacity 0.75s cubic-bezier(0.77, 0, 0.18, 1);
         }
 
         body.preloading {
@@ -1689,24 +1597,21 @@
 
 <body class="preloading">
 
-    <!-- PRELOADER -->
-    <div id="stage" style="position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center;">
-        <!-- Phase 1 -->
+    <!-- PRELOADER (inline to avoid caching issues) -->
+    <div id="preloader" style="position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; transition: opacity 1s cubic-bezier(0.77, 0, 0.18, 1); opacity: 1;">
+        <!-- Phase 1: WebP animation -->
         <div id="phase-webp" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.55s ease;">
             <img id="anim-img" alt="" style="display: block; width: auto; height: auto; max-width: min(280px, 60vw); max-height: 50vh; object-fit: contain;" />
         </div>
-
-        <!-- Phase 2 -->
+        <!-- Phase 2: Typewriter -->
         <div id="phase-type" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 8vw; text-align: center; opacity: 0; transition: opacity 0.55s ease;">
-            <div class="pre-rule"></div>
-            <p class="pre-text">
-                <span id="pre-typed"></span><span class="pre-cursor" id="pre-cursor"></span>
+            <div style="width: 32px; height: 1px; background: var(--accent); margin: 0 auto 36px; transform: scaleX(0); transform-origin: left; transition: transform 0.5s cubic-bezier(0.77, 0, 0.18, 1) 0.2s;" id="pre-rule"></div>
+            <p style="font-family: 'Courier New', Courier, monospace; font-size: clamp(0.78rem, 1.1vw, 0.95rem); font-weight: 400; letter-spacing: 0.08em; line-height: 1.7; color: var(--dim); max-width: 620px;">
+                <span id="pre-typed"></span><span id="pre-cursor" style="display: inline-block; width: 2px; height: 1em; background: var(--accent); margin-left: 4px; vertical-align: text-bottom; animation: blink 0.85s step-end infinite;"></span>
             </p>
         </div>
-        
-        <!-- Audio -->
-        <audio id="tw-audio" preload="auto">
-            <source src="SFX/Typewriter.mov?t=" type="audio/wav">
+        <audio id="tw-audio" preload="auto" style="display: none;">
+            <source src="SFX/Typewriter.mov" type="audio/wav">
         </audio>
     </div>
 
@@ -1959,7 +1864,8 @@
                     </div>
                     <div class="wp-gallery">
                         <img src="Web Projekts/InesMuellnerShiatsu/WebsiteInesPicture.png" alt="Ines Müllner Shiatsu Website" loading="lazy" class="wp-img">
-                        <div class="wp-counter">01 / 02</div>
+                        <img src="Web Projekts/InesMuellnerShiatsu/Qigong.jpg" alt="Qigong" loading="lazy" class="wp-img">
+                        <div class="wp-counter">01 / 03</div>
                     </div>
                 </div>
 
@@ -2154,7 +2060,7 @@ const sfx = (() => {
         startTypewriter() {
             twAudio.currentTime = 0;
             twAudio.volume = 0;
-            fadeIn(twAudio, 0.15, 200);
+            fadeIn(twAudio, 0.3, 200);
         },
         stopTypewriter() {
             fadeOut(twAudio, 400);
@@ -2163,25 +2069,25 @@ const sfx = (() => {
         playGrain() {
             grainAudio.currentTime = 0;
             grainAudio.volume = 0;
-            fadeIn(grainAudio, 0.06, 200);           // max 12% volume — subtle
+            fadeIn(grainAudio, 0.12, 200);           // max 12% volume — subtle
             setTimeout(() => fadeOut(grainAudio, 400), 620);
         },
         // Button click: subtle
         playClick() {
             clickAudio.currentTime = 0;
-            clickAudio.volume = 0.125;
+            clickAudio.volume = 0.25;
             clickAudio.play().catch(() => {});
         },
         // Hero play button: cinematic opening sound
         playOpen() {
             playOpenAudio.currentTime = 0;
-            playOpenAudio.volume = 0.325;
+            playOpenAudio.volume = 0.65;
             playOpenAudio.play().catch(() => {});
         },
         // Wheel spin: plays during carousel momentum
         playWheelSpin() {
             wheelSpinAudio.currentTime = 0;
-            wheelSpinAudio.volume = 0.275;
+            wheelSpinAudio.volume = 0.55;
             wheelSpinAudio.play().catch(() => {});
         },
         stopWheelSpin() {
@@ -2227,28 +2133,23 @@ const sfx = (() => {
            PRELOADER
         ══════════════════════════════════════════════════════════════ */
         (function () {
-
-            /* ── Config ── */
             const WEBP_SRC = 'PageloaderProres-ezgif.com-video-to-webp-converter.webp';
             const TYPEWRITER_TEXT = 'Ein digitales Erlebnis, gestaltet von Marc Heidinger.';
-            const TYPEWRITER_SPEED = 6;   // ms per character
-            const HOLD_AFTER_TYPE = 0;  // ms to hold after typing finishes
-            const FALLBACK_MS = 3500; // if RIFF parse fails
+            const TYPEWRITER_SPEED = 68;
+            const HOLD_AFTER_TYPE = 900;
+            const FALLBACK_MS = 3500;
 
-            /* ── DOM ── */
-            const phaseWebp = document.getElementById('phase-webp');
-            const phaseType = document.getElementById('phase-type');
-            const animImg = document.getElementById('anim-img');
-            const typedEl = document.getElementById('pre-typed');
-            const cursorEl = document.getElementById('pre-cursor');
-
-            /* ── Guard: only start typewriter once ── */
+            const preloader = document.getElementById('preloader');
+            const phaseWebp = preloader.querySelector('#phase-webp');
+            const phaseType = preloader.querySelector('#phase-type');
+            const preRule = preloader.querySelector('#pre-rule');
+            const animImg = preloader.querySelector('#anim-img');
+            const typedEl = preloader.querySelector('#pre-typed');
+            const cursorEl = preloader.querySelector('#pre-cursor');
+            const twAudio = preloader.querySelector('#tw-audio');
+            
             let typewriterDone = false;
 
-            /* ────────────────────────────────────────────────────────────
-             *  Parse animated WebP RIFF → sum of all ANMF frame durations
-             *  Returns total milliseconds, or null on failure.
-             * ─────────────────────────────────────────────────────────── */
             function parseWebPTotalMs(buf) {
                 try {
                     const v = new DataView(buf);
@@ -2268,17 +2169,11 @@ const sfx = (() => {
                 } catch (_) { return null; }
             }
 
-            /* ────────────────────────────────────────────────────────────
-             *  Typewriter → then signal the parent frame
-             * ─────────────────────────────────────────────────────────── */
-            // Preloader typewriter SFX
-            const _twAudio = document.getElementById('tw-audio');
-            
-            function _twFade(target, ms) {
-                const start = _twAudio.volume; const steps = 20; const dt = ms / steps; let s = 0;
+            function twFade(target, ms) {
+                const start = twAudio.volume; const steps = 20; const dt = ms / steps; let s = 0;
                 const iv = setInterval(() => {
-                    s++; _twAudio.volume = Math.max(0, Math.min(1, start + (target - start) * s / steps));
-                    if (s >= steps) { clearInterval(iv); if (target === 0) _twAudio.pause(); }
+                    s++; twAudio.volume = Math.max(0, Math.min(1, start + (target - start) * s / steps));
+                    if (s >= steps) { clearInterval(iv); if (target === 0) twAudio.pause(); }
                 }, dt);
             }
 
@@ -2286,13 +2181,13 @@ const sfx = (() => {
                 if (typewriterDone) return;
                 typewriterDone = true;
 
-                phaseWebp.classList.add('out');
-                phaseType.classList.add('in');
+                phaseWebp.style.opacity = '0';
+                phaseType.style.opacity = '1';
+                preRule.style.transform = 'scaleX(1)';
 
-                // start typewriter sound
-                _twAudio.currentTime = 0; 
-                _twAudio.play().catch(() => {}); 
-                _twFade(0.15, 50);
+                twAudio.currentTime = 0;
+                twAudio.play().catch(() => {});
+                twFade(0.28, 200);
 
                 let i = 0;
                 function type() {
@@ -2300,8 +2195,9 @@ const sfx = (() => {
                         typedEl.textContent += TYPEWRITER_TEXT[i++];
                         setTimeout(type, TYPEWRITER_SPEED);
                     } else {
-                        cursorEl.classList.add('done');
-                        _twFade(0, 100);  // fade out when done
+                        cursorEl.style.animation = 'none';
+                        cursorEl.style.opacity = '0';
+                        twFade(0, 400);
                         setTimeout(finish, HOLD_AFTER_TYPE);
                     }
                 }
@@ -2309,70 +2205,48 @@ const sfx = (() => {
             }
 
             function finish() {
-                const stage = document.getElementById('stage');
-                // Quick dissolve fade-out of preloader
-                stage.style.transition = 'opacity 0.1s ease-out';
-                stage.style.opacity = '0';
-                stage.style.pointerEvents = 'none';
-                document.body.classList.remove('preloading');
-                // Restore normal scrolling for main content
-                document.body.style.overflow = 'auto';
-                document.body.style.height = 'auto';
-                setTimeout(() => stage.remove(), 100);
+                // Fade out the typewriter text
+                phaseType.style.transition = 'opacity 0.8s ease';
+                phaseType.style.opacity = '0';
+                
+                // Then harshly fade out the preloader after text is gone
+                setTimeout(() => {
+                    preloader.style.transition = 'opacity 0.3s ease';
+                    preloader.style.opacity = '0';
+                    preloader.style.pointerEvents = 'none';
+                    document.body.classList.remove('preloading');
+                    setTimeout(() => preloader.remove(), 300);
+                }, 1000);
             }
 
-            /* ────────────────────────────────────────────────────────────
-             *  Main: fetch once, parse duration, play via blob URL,
-             *  stop after exactly one loop.
-             * ─────────────────────────────────────────────────────────── */
             async function run() {
                 try {
-                    const t0 = performance.now();
-                    // Add cache-buster to the fetch URL
-                    const buf = await fetch(WEBP_SRC + '?t=' + Date.now()).then(r => {
+                    const buf = await fetch(WEBP_SRC).then(r => {
                         if (!r.ok) throw new Error('HTTP ' + r.status);
                         return r.arrayBuffer();
                     });
-                    
-                    // Update audio source with timestamp
-                    const audioSource = _twAudio.querySelector('source');
-                    if (audioSource) {
-                        audioSource.src = 'SFX/Typewriter.mov?t=' + Date.now();
-                        _twAudio.load();
-                    }
 
                     const totalMs = parseWebPTotalMs(buf) ?? FALLBACK_MS;
-                    console.log('[Preloader] animation duration:', totalMs + 'ms');
 
-                    // Create a blob URL — we control when it stops
                     const blob = new Blob([buf], { type: 'image/webp' });
                     const blobUrl = URL.createObjectURL(blob);
 
-                    // Show animation
                     animImg.src = blobUrl;
 
-                    // How long has already elapsed during fetch?
-                    const elapsed = performance.now() - t0;
-                    const remaining = Math.max(0, totalMs - elapsed);
-                    console.log('[Preloader] remaining after load:', remaining + 'ms');
-
                     setTimeout(() => {
-                        animImg.style.display = 'none'; // hide before clearing src (prevents broken-image box)
-                        animImg.src = '';               // stop browser from looping
-                        URL.revokeObjectURL(blobUrl);   // free memory
+                        animImg.style.display = 'none';
+                        animImg.src = '';
+                        URL.revokeObjectURL(blobUrl);
                         startTypewriter();
-                    }, remaining);
+                    }, totalMs);
 
                 } catch (err) {
                     console.error('[Preloader] load error:', err);
-                    console.error('[Preloader] failed to fetch:', WEBP_SRC);
-                    // Can't load WebP — skip straight to typewriter after a beat
                     setTimeout(startTypewriter, 400);
                 }
             }
 
             run();
-
         })();
 
         /* ══════════════════════════════════════════════════════════════
@@ -3146,4 +3020,5 @@ const sfx = (() => {
 
     </script>
 </body>
+
 </html>
