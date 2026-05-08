@@ -2018,7 +2018,7 @@
 ══════════════════════════════════════════════════════════════ */
 const sfx = (() => {
     // Typewriter: .mov file from SFX folder (user-supplied)
-    const twAudio = new Audio('SFX/Typewriter.mov');
+    const twAudio = new Audio('SFX/Typewriter.mp3');
     twAudio.loop = true;
     twAudio.volume = 0;
 
@@ -2060,7 +2060,7 @@ const sfx = (() => {
         startTypewriter() {
             twAudio.currentTime = 0;
             twAudio.volume = 0;
-            fadeIn(twAudio, 0.9, 200);
+            fadeIn(twAudio, 0.3, 200);
         },
         stopTypewriter() {
             fadeOut(twAudio, 400);
